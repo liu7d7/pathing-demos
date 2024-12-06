@@ -57,8 +57,8 @@ const timed_state = {
     if (this.i >= this.actions.length) return;
 
     let a = this.actions[this.i];
-    this.x += Math.cos(a.direction) * a.speed * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
-    this.y -= Math.sin(a.direction) * a.speed * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
+    this.x += (this.vx = Math.cos(a.direction) * a.speed) * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
+    this.y -= (this.vy = Math.sin(a.direction) * a.speed) * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
 
     if (this.push_ticks) {
       this.push_ticks--;
@@ -72,7 +72,7 @@ const pid_to_point_state = {
   name: "PID to Point",
   time: 0,
   x: 0, y: 0, ix: 100, iy: 100,
-  i: 0,
+  i: 0, h: 0, vx: 0, vy: 0,
   error_sum: 0,
   last_error: 0,
   points: [{x: 300, y: 300}, {x: 600, y: 300}, {x: 200, y: 800}, {x: 800, y: 800}],
@@ -111,9 +111,10 @@ const pid_to_point_state = {
     correction *= 4;
 
     let dir = Math.atan2(-(this.points[this.i].y - this.y), this.points[this.i].x - this.x);
+    this.h = dir;
 
-    this.x += Math.cos(dir) * correction * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
-    this.y -= Math.sin(dir) * correction * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
+    this.x += (this.vx = Math.cos(dir) * correction) * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
+    this.y -= (this.vy = Math.sin(dir) * correction) * frict / 5 * (1 + (Math.random()) * 0.3 * vary / 5);
 
     if (this.push_ticks) {
       this.push_ticks--;
@@ -159,6 +160,21 @@ function draw_x(x, y, r, color) {
   ctx.stroke();
 }
 
+function draw_arrow(x1, y1, x2, y2, color) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  let angle = Math.atan2(-(y1 - y2), x1 - x2);
+  let angle1 = angle + Math.PI / 4;
+  let angle2 = angle - Math.PI / 4;
+  ctx.lineTo(x2 + 5 * Math.cos(angle1), y2 - 5 * Math.sin(angle1));
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 + 5 * Math.cos(angle2), y2 - 5 * Math.sin(angle2));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
 function draw() {
   ctx.resetTransform();
   ctx.fillStyle = "#1e1e2f";
@@ -168,6 +184,7 @@ function draw() {
 
   switch (cur_demo) {
     case DEMO_TIMED: {
+      draw_arrow(timed_state.x, timed_state.y, timed_state.x + timed_state.vx * 15, timed_state.y - timed_state.vy * 15, "#ffd800");
       draw_circle(timed_state.x, timed_state.y, 10, "white");
       let target = timed_state.get_target();
       draw_x(target.x, target.y, 10, "#00ff00");
@@ -175,6 +192,7 @@ function draw() {
       break;
     }
     case DEMO_P2P: {
+      draw_arrow(pid_to_point_state.x, pid_to_point_state.y, pid_to_point_state.x + pid_to_point_state.vx * 15, pid_to_point_state.y - pid_to_point_state.vy * 15, "#ffd800");
       draw_circle(pid_to_point_state.x, pid_to_point_state.y, 10, "white");
       if (pid_to_point_state.i < pid_to_point_state.points.length) {
         draw_x(pid_to_point_state.points[pid_to_point_state.i].x, pid_to_point_state.points[pid_to_point_state.i].y, 5, "#ffd800");
