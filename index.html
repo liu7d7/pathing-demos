@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Path Following Demos</title>
+    <link href="style.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="canvas" class="view" width="1000" height="1000" ></canvas>
+    <div class="more" style="padding-left: 0.5rem">
+      <span id="cur_demo">Current Demo: Timed</span>
+      <button id="next_demo" onclick="(function(){cur_demo++; cur_demo %= DEMO_N; states[cur_demo].reset(); cur_demo_display.innerHTML = `Current Demo: ${states[cur_demo].name}`;
+})();">Next Demo</button>
+      <div style="height: 0.5rem"></div>
+      <button id="reset" onclick="states[cur_demo].reset()">Reset Simulation</button>
+      <div style="height: 0.5rem"></div>
+      <button id="push">Push the Robot</button>
+      <div style="height: 0.5rem"></div>
+      <span>Battery Level</span>
+      <input type="range" min="1" max="5" value="5" id="friction"></input>
+      <span>Random Error</span>
+      <input type="range" min="0" max="5" value="10" id="variance"></input>
+    </div>
+    </div>
+  </body>
+  <script src="index.js"></script>
+</html>
+    </div>
+    </div>
+  </body>
+  <script src="index.js"></script>
+</html>
