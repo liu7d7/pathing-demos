@@ -79,6 +79,8 @@ const pid_to_point_state = {
   reset: function() {
     this.x = this.ix;
     this.y = this.iy;
+    this.error_sum = 0;
+    this.last_error = 0;
   },
   get_target: function() {
     return this.points.at(-1);

@@ -30,10 +30,14 @@ body {
 
 }
 
-@media (max-width: 768px) {
+@media (orientation: portrait) {
 body {
   font-size: 32px;
   padding: 1rem;
+}
+
+input {
+  height: 4rem;
 }
 }
 
